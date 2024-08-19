@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+}
+
+group = 'nunettine.game'
+version = '1.0-SNAPSHOT'
+
+allprojects {
+    repositories {
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+    }
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation 'com.github.shin285:KOMORAN:3.3.9'
+}
+
+test {
+    useJUnitPlatform()
+}
