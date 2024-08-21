@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
@@ -55,10 +56,12 @@ public class ServerApp {
     boolean firstTurn = true;
     boolean timeOver = false;
     boolean wrongWord = false;
+    boolean isBeforeWord = false;
     User playUser = user1;
     User waitUser = user2;
     String newWord = new String();
     String beforeWord = new String();
+    List<String> wordList = new ArrayList<>();
 
     while (!gameEnd) {
       playUser.send("play");
@@ -66,7 +69,9 @@ public class ServerApp {
 
       long startTime = System.currentTimeMillis();
       newWord = playUser.receive();
+      wordList.add(newWord);
       waitUser.send(playUser.getName() + "의 단어 >> " + newWord);
+      waitUser.send(getWordList(wordList));
       long endTime = System.currentTimeMillis();
       long timeElapsed = endTime - startTime;
 
@@ -82,8 +87,13 @@ public class ServerApp {
       System.out.println(resultList.size());
       System.out.println(resultPair.getSecond());
 
-      if (resultList.size() != 1 || !resultPair.getSecond().equals("NNG")) {
+      if (resultList.size() != 1
+          || (!resultPair.getSecond().equals("NNG") && !resultPair.getSecond().equals("NNP"))) {
         wrongWord = true;
+      }
+
+      if (wordList.contains(newWord)) {
+        isBeforeWord = true;
       }
 
       if (!firstTurn) {
@@ -100,6 +110,9 @@ public class ServerApp {
           }
           if (wrongWord) {
             message.append("올바르지 않은 단어입니다!!! (명사형 X or 두 개의 단어)");
+          }
+          if (isBeforeWord) {
+            message.append("이전에 사용한 단어입니다!!!");
           }
 
           playUser.send(message.toString());
@@ -128,6 +141,21 @@ public class ServerApp {
       }
 
     }
+  }
+
+  private String getWordList(List<String> wordList) {
+    StringBuilder stringBuilder = new StringBuilder();
+
+    for (String word : wordList) {
+      stringBuilder.append(word);
+      if (word.equals(wordList.getLast())) {
+        return stringBuilder.toString();
+      } else {
+        stringBuilder.append(" - ");
+      }
+
+    }
+    return stringBuilder.toString();
   }
 
 }

@@ -39,6 +39,7 @@ public class ClientApp {
       } else if (command.equals("wait")) {
         System.out.println("...상대방 입력 대기중");
         System.out.println(scanner.nextLine());
+        System.out.println(scanner.nextLine());
       } else if (command.equals("lose") || command.equals("win")) {
         System.out.println(scanner.nextLine());
         printStream.println("입력 확인");
